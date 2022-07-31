@@ -10,10 +10,10 @@ const catSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		owner: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User'
-		},
+		adoptable: {
+			type: Boolean,
+			required: true
+		}
 	},
 	{
 		timestamps: true,

@@ -30,7 +30,6 @@ const router = express.Router()
 //index
 router.get('/cats', (req,res,next) =>{
     Cat.find()
-    .populate('owner')
     //find cats
         .then((cats) => {
             return cats.map((cat) => cat.toObject())
@@ -43,9 +42,8 @@ router.get('/cats', (req,res,next) =>{
 })
 
 //show
-router.get('/cats/:id', requireToken, (req,res,next) =>{
+router.get('/cats/:id', (req,res,next) =>{
     Cat.findById(req.params.id)
-    .populate('owner')
     //in case 404
     .then(handle404)
     .then((cat) => res.status(200).json({cat: cat.toObject() }))
@@ -54,9 +52,7 @@ router.get('/cats/:id', requireToken, (req,res,next) =>{
 })
 
 //POST
-router.post('/cats', requireToken, (req,res,next) => {
-    //requireToken gives req.user.id
-    req.body.cat.owner = req.user.id
+router.post('/cats', (req,res,next) => {
     Cat.create(req.body.cat)
     .then((cat) => {
         res.status(201).json({cat: cat.toObject()})
@@ -72,7 +68,6 @@ router.patch('/cats/:id', requireToken, removeBlanks, (req,res,next) =>{
     Cat.findById(req.params.id)
         .then(handle404)
         .then((cat) => {
-            requireOwnership(req, cat)
             return cat.updateOne(req.body.cat)
         })
         .then(() => res.sendStatus(204))
@@ -84,7 +79,6 @@ router.delete('/cats/:id', requireToken, (req,res,next) => {
     Cat.findById(req.params.id)
     .then(handle404)
     .then((cat) => {
-        requireOwnership(req, cat)
         cat.deleteOne()
     })
     .then(() => res.sendStatus(204))

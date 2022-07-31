@@ -1,0 +1,40 @@
+const mongoose = require('mongoose')
+const Cat = require('./cat')
+const db = require('../../config/db')
+
+const startCats = [
+    { name: 'Sparky', age: 2, adoptable: true},
+    { name: 'Leroy', age: 10, adoptable: true},
+    { name: 'Biscuits', age: 3, adoptable: false},
+    { name: 'Hulk Hogan', age: 1, adoptable: false}
+]
+
+// first we need to connect to the database
+mongoose.connect(db, {
+    useNewUrlParser: true
+})
+    .then(() => {
+        // first we remove all of the pets
+        Cat.deleteMany({})
+            .then(deletedCats => {
+                console.log('deletedPets', deletedCats)
+                // the next step is to use our startPets array to create our seeded pets
+                Cat.create(startCats)
+                    .then(newCats => {
+                        console.log('the new cats', newCats)
+                        mongoose.connection.close()
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        mongoose.connection.close()
+                    })
+            })
+            .catch(error => {
+                console.log(error)
+                mongoose.connection.close()
+            })
+    })
+    .catch(error => {
+        console.log(error)
+        mongoose.connection.close()
+    })
