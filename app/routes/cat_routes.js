@@ -61,7 +61,7 @@ router.post('/cats', (req,res,next) => {
 })
 
 //UPDATE
-router.patch('/cats/:id', requireToken, removeBlanks, (req,res,next) =>{
+router.patch('/cats/:id', removeBlanks, (req,res,next) =>{
     //if the client attempts to change the 'owner' propety by including a new owner, prevent that
     delete req.body.cat.owner
 
@@ -75,7 +75,7 @@ router.patch('/cats/:id', requireToken, removeBlanks, (req,res,next) =>{
 })
 
 //DESTROY
-router.delete('/cats/:id', requireToken, (req,res,next) => {
+router.delete('/cats/:id', (req,res,next) => {
     Cat.findById(req.params.id)
     .then(handle404)
     .then((cat) => {
